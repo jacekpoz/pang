@@ -11,6 +11,13 @@ find_package(SFML 2 REQUIRED COMPONENTS audio graphics window system)
 
 add_executable(${PROJECT_NAME} 
 	main.cpp
+	Game.cpp
+	FPS.cpp
+	systems/CollisionSystem.cpp
+	systems/MovementSystem.cpp
+	systems/PlayerMovementSystem.cpp
+	systems/RenderingSystem.cpp
+	systems/System.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "..\\lib\\entt\\src")

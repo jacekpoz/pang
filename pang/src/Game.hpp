@@ -22,6 +22,7 @@ public:
 
 	void pause();
 	void resume();
+	void togglePause();
 
 	bool isRunning();
 
@@ -37,5 +38,12 @@ private:
 	std::vector<RenderingSystem*> renderingSystems;
 
 	FPS fps;
+
+	bool isPaused;
+
+	unsigned int origWidth, origHeight;
+	unsigned int windowWidth, windowHeight;
+
+	sf::Vector2f scale;
 	
 };

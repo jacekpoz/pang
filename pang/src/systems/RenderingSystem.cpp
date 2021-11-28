@@ -1,7 +1,7 @@
 #include "RenderingSystem.hpp"
 
 #include "../components/components.hpp"
-#include "../math.hpp"
+#include "../util.hpp"
 
 #include <variant>
 #include <iostream>
@@ -22,29 +22,6 @@ RenderingSystem::~RenderingSystem() {
 }
 
 void RenderingSystem::render(sf::Vector2f scale) {
-
-	auto surfaceView = registry->view<Surface, Sprite>();
-
-	for (auto surface : surfaceView) {
-		auto& [surf, sprite] = surfaceView.get(surface);
-
-		sf::Texture& surfTx = getTexture(sprite.path);
-		surfTx.setRepeated(true);
-
-		sf::Sprite& spr = getSprite(surface);
-		spr.setScale(scale);
-		
-		sf::IntRect sprRect(
-			static_cast<int>(surf.rect.left), 
-			static_cast<int>(surf.rect.top), 
-			static_cast<int>(surf.rect.width), 
-			static_cast<int>(surf.rect.height)
-		);
-		spr.setTextureRect(sprRect);
-
-		window->draw(spr);
-		
-	}
 
 	auto renderableView = registry->view<Position, Sprite>();
 	for (auto& entity : renderableView) {
