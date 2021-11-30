@@ -1,5 +1,7 @@
 #include "PhysicsSystem.hpp"
 
+#include <iostream>
+
 PhysicsSystem::PhysicsSystem() {}
 
 PhysicsSystem::~PhysicsSystem() {}
@@ -24,6 +26,14 @@ void PhysicsSystem::update(const float deltaTime, sf::Vector2f scale) {
 
 		p.pos.x += (v.vel.x * deltaTime) * scale.x;
 		p.pos.y += (v.vel.y * deltaTime) * scale.y;
+
+		if (registry->all_of<Player>(entity)) {
+			std::cout << 
+			"fX: " << f.force.x << "; fY: " << f.force.y << "; " <<
+			"aX: " << a.accel.x << "; aY: " << a.accel.y << "; " <<
+			"vX: " << v.vel.x << "; vY: " << v.vel.y << "; " <<
+			"pX: " << p.pos.x << "; pY: " << p.pos.y << "; \n";
+		}
 
 		f.force.x = 0.f;
 		f.force.y = 0.f;
