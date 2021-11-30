@@ -1,6 +1,5 @@
 #include "RenderingSystem.hpp"
 
-#include "../components/components.hpp"
 #include "../util.hpp"
 
 #include <variant>

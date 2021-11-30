@@ -37,8 +37,11 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	PlayerMovementSystem* pms = new PlayerMovementSystem();
 	addSystem(pms);
 
-	MovementSystem* ms = new MovementSystem();
-	addSystem(ms);
+	GravitySystem* gs = new GravitySystem();
+	addSystem(gs);
+
+	PhysicsSystem* ps = new PhysicsSystem();
+	addSystem(ps);
 
 	CollisionSystem* cs = new CollisionSystem();
 	addSystem(cs);
@@ -46,7 +49,11 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	auto player = registry.create();
 
 	registry.emplace<Sprite>(player, "res\\textures\\player.png");
-	registry.emplace<Position>(player, sf::Vector2f(100, 100), sf::Vector2f(100, 100));
+	registry.emplace<Position>(player, sf::Vector2f(100.f, 100.f));
+	registry.emplace<Mass>(player, 50.f);
+	registry.emplace<Force>(player, sf::Vector2f(0.f, 0.f));
+	registry.emplace<Acceleration>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(1000.f, 1000.f));
+	registry.emplace<Velocity>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(1000.f, 1000.f));
 	registry.emplace<Player>(player);
 	Hitbox playerH;
 	playerH.isRect = true;

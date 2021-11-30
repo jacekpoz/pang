@@ -14,7 +14,8 @@ add_executable(${PROJECT_NAME}
 	Game.cpp
 	FPS.cpp
 	systems/CollisionSystem.cpp
-	systems/MovementSystem.cpp
+	systems/GravitySystem.cpp
+	systems/PhysicsSystem.cpp
 	systems/PlayerMovementSystem.cpp
 	systems/RenderingSystem.cpp
 	systems/System.cpp

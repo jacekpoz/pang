@@ -1,7 +1,5 @@
 #include "PlayerMovementSystem.hpp"
 
-#include "../components/components.hpp"
-
 #include <iostream>
 
 #include <SFML/Window/Keyboard.hpp>
@@ -21,7 +19,7 @@ void PlayerMovementSystem::update(const float deltaTime, sf::Vector2f scale) {
 		for (auto entity : players) {
 			auto& pos = players.get<Position>(entity);
 			
-			pos.nextPos.x -= 50 * deltaTime * scale.x;
+			pos.pos.x -= 50 * deltaTime * scale.x;
 		} 
 	}
 
@@ -32,7 +30,7 @@ void PlayerMovementSystem::update(const float deltaTime, sf::Vector2f scale) {
 		for (auto entity : players) {
 			auto& pos = players.get<Position>(entity);
 			
-			pos.nextPos.x += 50 * deltaTime * scale.x;
+			pos.pos.x += 50 * deltaTime * scale.x;
 		} 
 	}
 }
