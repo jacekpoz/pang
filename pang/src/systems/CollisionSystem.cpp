@@ -1,6 +1,8 @@
 #include "CollisionSystem.hpp"
 
-CollisionSystem::CollisionSystem() {}
+CollisionSystem::CollisionSystem(entt::observer movedEntities) {
+	
+}
 
 CollisionSystem::~CollisionSystem() {}
 

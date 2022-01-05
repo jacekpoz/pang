@@ -50,7 +50,7 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 
 	auto player = registry.create();
 
-	registry.emplace<Sprite>(player, "res\\textures\\player.png");
+	registry.emplace<Sprite>(player, "res/textures/player.png");
 	registry.emplace<Position>(player, sf::Vector2f(100.f, 100.f));
 	registry.emplace<Mass>(player, 50.f);
 	registry.emplace<Force>(player, sf::Vector2f(0.f, 0.f));
@@ -65,14 +65,14 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	playerH.rect = playerRect;
 	registry.emplace<Hitbox>(player, playerH);
 
-	std::vector tiles = parseLevel("res\\levels\\lvl1.txt");
+	std::vector tiles = parseLevel("res/levels/lvl1.txt");
 	for (Wall w : tiles) {
 		if (w.type == Wall::Type::None) continue;
 		
 		auto tile = registry.create();
 
 		registry.emplace<Wall>(tile, w);
-		registry.emplace<Sprite>(tile, "res\\textures\\wall.png");
+		registry.emplace<Sprite>(tile, "res/textures/wall.png");
 		Hitbox wallH;
 		wallH.isRect = true;
 		Rect wallRect;

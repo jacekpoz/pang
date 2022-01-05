@@ -45,5 +45,4 @@ private:
 	unsigned int windowWidth, windowHeight;
 
 	sf::Vector2f scale;
-	
 };

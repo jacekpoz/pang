@@ -24,7 +24,7 @@ void RenderingSystem::render(sf::Vector2f scale) {
 
 	auto renderableView = registry->view<Position, Sprite>();
 	for (auto& entity : renderableView) {
-		auto& [pos, sprite] = renderableView.get(entity);
+		auto [pos, sprite] = renderableView.get(entity);
 			
 		sf::Texture& tx = getTexture(sprite.path);
 		sf::Sprite& spr = getSprite(entity);

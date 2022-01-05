@@ -11,7 +11,7 @@ void PhysicsSystem::update(const float deltaTime, sf::Vector2f scale) {
 	auto movables = registry->view<Force, Mass, Acceleration, Velocity, Position>();
 
 	for (auto entity : movables) {
-		auto& [f, m, a, v, p] = movables.get(entity);
+		auto [f, m, a, v, p] = movables.get(entity);
 
 		// the following calculations are structured like this:
 		// variable = (physics shit) * computer shit
@@ -23,6 +23,8 @@ void PhysicsSystem::update(const float deltaTime, sf::Vector2f scale) {
 
 		v.vel.x += (a.accel.x * deltaTime) * scale.x;
 		v.vel.y += (a.accel.y * deltaTime) * scale.y;
+
+		p.lastPos = p.pos;
 
 		p.pos.x += (v.vel.x * deltaTime) * scale.x;
 		p.pos.y += (v.vel.y * deltaTime) * scale.y;
