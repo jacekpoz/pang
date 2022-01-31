@@ -23,7 +23,7 @@
 
 Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	window.create(mode, title, style);
-	window.setVerticalSyncEnabled(true);
+	window.setVerticalSyncEnabled(false);
 
 	origWidth = windowWidth = mode.width;
 	origHeight = windowHeight = mode.height;
@@ -33,36 +33,29 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 		static_cast<float>(origHeight) / static_cast<float>(windowHeight)
 	);
 
-	RenderingSystem* rs = new RenderingSystem(&window);
+	RenderingSystem* rs = new RenderingSystem(registry, &window);
 	addSystem(rs);
 
-	PlayerMovementSystem* pms = new PlayerMovementSystem();
+	PlayerMovementSystem* pms = new PlayerMovementSystem(registry);
 	addSystem(pms);
 
-	GravitySystem* gs = new GravitySystem();
+	GravitySystem* gs = new GravitySystem(registry);
 	addSystem(gs);
 
-	PhysicsSystem* ps = new PhysicsSystem();
-	addSystem(ps);
-
-	CollisionSystem* cs = new CollisionSystem();
+	CollisionSystem* cs = new CollisionSystem(registry);
 	addSystem(cs);
 
 	auto player = registry.create();
 
 	registry.emplace<Sprite>(player, "res/textures/player.png");
-	registry.emplace<Position>(player, sf::Vector2f(100.f, 100.f));
+	registry.emplace<Position>(player, sf::Vector2f(200.f, 200.f));
 	registry.emplace<Mass>(player, 50.f);
-	registry.emplace<Force>(player, sf::Vector2f(0.f, 0.f));
-	registry.emplace<Acceleration>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(1000.f, 1000.f));
-	registry.emplace<Velocity>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(1000.f, 1000.f));
+	registry.emplace<Acceleration>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
+	registry.emplace<Velocity>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(500.f, 500.f));
 	registry.emplace<Player>(player);
 	Hitbox playerH;
-	playerH.isRect = true;
-	Rect playerRect;
-	playerRect.w = 64;
-	playerRect.h = 128;
-	playerH.rect = playerRect;
+	playerH.w = 64;
+	playerH.h = 128;
 	registry.emplace<Hitbox>(player, playerH);
 
 	std::vector tiles = parseLevel("res/levels/lvl1.txt");
@@ -74,13 +67,10 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 		registry.emplace<Wall>(tile, w);
 		registry.emplace<Sprite>(tile, "res/textures/wall.png");
 		Hitbox wallH;
-		wallH.isRect = true;
-		Rect wallRect;
-		wallRect.w = 64;
-		wallRect.h = 64;
-		wallH.rect = wallRect;
+		wallH.w = 64;
+		wallH.h = 64;
 		registry.emplace<Hitbox>(tile, wallH);
-		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * wallRect.w, w.pos.y * wallRect.h));
+		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * wallH.w + 50, w.pos.y * wallH.h + 50));
 	}
 }
 
@@ -116,6 +106,9 @@ void Game::handleEvent() {
 				windowWidth = event.size.width;
 				windowHeight = event.size.height;
 				break;
+			case sf::Event::KeyPressed:
+				if (event.key.code == sf::Keyboard::Q) window.close();
+				break;
 			default:
 				break;
 		}
@@ -131,6 +124,7 @@ void Game::update(sf::Time deltaTime) {
 	float dt = deltaTime.asSeconds();
 
 	fps.update();
+	std::cout << "fps: " << fps.getFPS() << " "/* << "\n"*/;
 	
 	for (auto s : systems) 
 		s->update(dt, scale);
@@ -174,12 +168,10 @@ bool Game::isRunning() {
 }
 
 void Game::addSystem(System* s) {
-	s->init(registry);
 	systems.push_back(s);
 }
 
 void Game::addSystem(RenderingSystem* rs) {
-	rs->init(registry);
 	renderingSystems.push_back(rs);
 }
 

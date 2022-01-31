@@ -13,7 +13,7 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
 
-RenderingSystem::RenderingSystem(sf::RenderWindow* w) : window(w) {}
+RenderingSystem::RenderingSystem(entt::registry& r, sf::RenderWindow* w) : System(r), window(w) {}
 
 RenderingSystem::~RenderingSystem() {
 	sprCache.clear();
@@ -25,8 +25,9 @@ void RenderingSystem::render(sf::Vector2f scale) {
 	auto renderableView = registry->view<Position, Sprite>();
 	for (auto& entity : renderableView) {
 		auto [pos, sprite] = renderableView.get(entity);
-			
-		sf::Texture& tx = getTexture(sprite.path);
+		
+		sf::Vector2f scaledPos = {pos.pos.x * scale.x, pos.pos.y * scale.y};
+
 		sf::Sprite& spr = getSprite(entity);
 
 		// sets sprite origin to the center of the texture
@@ -37,7 +38,7 @@ void RenderingSystem::render(sf::Vector2f scale) {
 		};
 		spr.setOrigin(localCenter);
 
-		spr.setPosition(pos.pos);
+		spr.setPosition(scaledPos);
 		spr.setRotation(sprite.angle);
 		spr.setScale(scale);
 		
@@ -46,32 +47,17 @@ void RenderingSystem::render(sf::Vector2f scale) {
 		// for debugging purposes
 		// TODO make a debug mode so I don't have to comment this out every time
 		if (registry->all_of<Hitbox>(entity)) {
-			auto& hitbox = registry->get<Hitbox>(entity);
-			if (hitbox.isRect) {
-				Rect r = std::get<Rect>(hitbox.rect);
-				sf::RectangleShape rect;
-				rect.setOrigin(localCenter);
-				rect.setPosition(pos.pos);
-				rect.setSize(sf::Vector2f(r.w, r.h));
-				rect.setScale(scale);
-				rect.setRotation(sprite.angle);
-				rect.setFillColor(sf::Color::Transparent);
-				rect.setOutlineColor(sf::Color::White);
-				rect.setOutlineThickness(1);
-				window->draw(rect);
-			} else if (!hitbox.isRect) {
-				Circ c = std::get<Circ>(hitbox.circ);
-				sf::CircleShape circ;
-				circ.setOrigin(localCenter);
-				circ.setPosition(pos.pos);
-				circ.setRadius(c.r);
-				circ.setScale(scale);
-				circ.setRotation(sprite.angle);
-				circ.setFillColor(sf::Color::Transparent);
-				circ.setOutlineColor(sf::Color::White);
-				circ.setOutlineThickness(1);
-				window->draw(circ);
-			}
+			auto& h = registry->get<Hitbox>(entity);
+			sf::RectangleShape rect;
+			rect.setOrigin(localCenter);
+			rect.setPosition(scaledPos);
+			rect.setSize(sf::Vector2f(h.w, h.h));
+			rect.setScale(scale);
+			rect.setRotation(sprite.angle);
+			rect.setFillColor(sf::Color::Transparent);
+			rect.setOutlineColor(sf::Color::White);
+			rect.setOutlineThickness(1);
+			window->draw(rect);
 		}
 	}
 }

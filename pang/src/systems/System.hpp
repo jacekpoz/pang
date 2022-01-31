@@ -17,7 +17,7 @@
 class System {
 
 public:
-	System();
+	System(entt::registry& r);
 	virtual ~System();
 
 	void init(entt::registry& r);

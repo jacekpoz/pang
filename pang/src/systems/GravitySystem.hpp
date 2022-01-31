@@ -10,7 +10,7 @@
 class GravitySystem : public System {
 
 public:
-	GravitySystem();
+	GravitySystem(entt::registry& r);
 	~GravitySystem();
 
 	void update(const float deltaTime, sf::Vector2f scale);

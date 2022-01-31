@@ -5,7 +5,7 @@
 class PlayerMovementSystem : public System {
 
 public:
-	PlayerMovementSystem();
+	PlayerMovementSystem(entt::registry& r);
 	~PlayerMovementSystem();
 
 	void update(const float deltaTime, sf::Vector2f scale);

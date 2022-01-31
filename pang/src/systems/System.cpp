@@ -1,6 +1,8 @@
 #include "System.hpp"
 
-System::System() : isPaused(false) {}
+System::System(entt::registry& r) : isPaused(false) {
+	init(r);
+}
 
 System::~System() {}
 

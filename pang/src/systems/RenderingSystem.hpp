@@ -17,7 +17,7 @@ using SpriteCache = std::unordered_map<entt::entity, sf::Sprite>;
 class RenderingSystem : public System {
 
 public:
-	RenderingSystem(sf::RenderWindow* w);
+	RenderingSystem(entt::registry& r, sf::RenderWindow* w);
 	virtual ~RenderingSystem();
 
 	void render(sf::Vector2f scale);
