@@ -11,11 +11,10 @@ class CollisionSystem : public System {
 
 public:
 	CollisionSystem(entt::registry& r);
-	~CollisionSystem();
 
-	void update(const float deltaTime, sf::Vector2f scale);
+	void update(const float deltaTime, const sf::Vector2f scale, const bool debug);
 	// could do those 2 in 1 method with a boolean but too lazy for now
-	void updateX(const float deltaTime, sf::Vector2f scale, entt::entity entity);
-	void updateY(const float deltaTime, sf::Vector2f scale, entt::entity entity);
+	void updateX(const float deltaTime, const sf::Vector2f scale, const entt::entity entity);
+	void updateY(const float deltaTime, const sf::Vector2f scale, const entt::entity entity);
 
 };

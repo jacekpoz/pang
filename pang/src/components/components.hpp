@@ -2,6 +2,7 @@
 
 #include "Acceleration.hpp"
 #include "Ball.hpp"
+#include "Health.hpp"
 #include "Hitbox.hpp"
 #include "Mass.hpp"
 #include "Player.hpp"
