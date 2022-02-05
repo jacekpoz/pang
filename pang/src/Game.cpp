@@ -33,30 +33,34 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 		static_cast<float>(origHeight) / static_cast<float>(windowHeight)
 	);
 
-	RenderingSystem* rs = new RenderingSystem(registry, &window);
-	addSystem(rs);
+	auto rs = std::make_unique<RenderingSystem>(registry, window);
+	addRenderingSystem(std::move(rs));
 
-	PlayerMovementSystem* pms = new PlayerMovementSystem(registry);
-	addSystem(pms);
+	auto ars = std::make_unique<AnimatedRenderingSystem>(registry, window);
+	addRenderingSystem(std::move(ars));
 
-	GravitySystem* gs = new GravitySystem(registry);
-	addSystem(gs);
+	auto pms = std::make_unique<PlayerMovementSystem>(registry);
+	addSystem(std::move(pms));
 
-	CollisionSystem* cs = new CollisionSystem(registry);
-	addSystem(cs);
+	auto gs = std::make_unique<GravitySystem>(registry);
+	addSystem(std::move(gs));
+
+	auto cs = std::make_unique<CollisionSystem>(registry);
+	addSystem(std::move(cs));
+
+	auto hs = std::make_unique<HealthSystem>(registry);
+	addSystem(std::move(hs));
 
 	auto player = registry.create();
 
 	registry.emplace<Sprite>(player, "res/textures/player.png");
-	registry.emplace<Position>(player, sf::Vector2f(200.f, 200.f));
+	registry.emplace<Health>(player, 5);
+	registry.emplace<Position>(player, sf::Vector2f(400.f, 200.f));
 	registry.emplace<Mass>(player, 50.f);
 	registry.emplace<Acceleration>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
 	registry.emplace<Velocity>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(500.f, 500.f));
 	registry.emplace<Player>(player);
-	Hitbox playerH;
-	playerH.w = 64;
-	playerH.h = 128;
-	registry.emplace<Hitbox>(player, playerH);
+	registry.emplace<Hitbox>(player, 64.f, 128.f);
 
 	std::vector tiles = parseLevel("res/levels/lvl1.txt");
 	for (Wall w : tiles) {
@@ -66,26 +70,29 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 
 		registry.emplace<Wall>(tile, w);
 		registry.emplace<Sprite>(tile, "res/textures/wall.png");
-		Hitbox wallH;
-		wallH.w = 64;
-		wallH.h = 64;
-		registry.emplace<Hitbox>(tile, wallH);
-		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * wallH.w + 50, w.pos.y * wallH.h + 50));
+		registry.emplace<Hitbox>(tile, 64.f, 64.f);
+		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * 64.f + 50.f, w.pos.y * 64.f + 50.f));
+	}
+
+	for (int i = 0; i < 10; ++i) {
+		auto ball = registry.create();
+
+		registry.emplace<Sprite>(ball, "res/textures/ball1.png");
+		registry.emplace<Position>(ball, sf::Vector2f(i * 25.f + 100.f, 200.f));
+		registry.emplace<Mass>(ball, 10.f);
+		registry.emplace<Acceleration>(ball, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
+		registry.emplace<Velocity>(ball, sf::Vector2f(50.f, 50.f), sf::Vector2f(500.f, 500.f));
+		registry.emplace<Ball>(ball, 1);
+		registry.emplace<Hitbox>(ball, 20.f, 20.f);
 	}
 }
 
 Game::~Game() {
+	window.close();
 
-	for (auto s : systems) 
-		delete s;
 	systems.clear();
-
-	for (auto rs : renderingSystems) 
-		delete rs;
 	renderingSystems.clear();
 
-	window.close();
-	
 	std::cout << "dupka" << std::endl;
 }
 
@@ -94,20 +101,25 @@ void Game::handleEvent() {
 	while (window.pollEvent(event)) {
 		switch (event.type) {
 			case sf::Event::Closed:
-				window.close();
+				isRunning = false;
 				break;
 			case sf::Event::LostFocus:
-				pause();
+				unfocus();
 				break;
 			case sf::Event::GainedFocus:
-				resume();
+				focus();
 				break;
 			case sf::Event::Resized:
 				windowWidth = event.size.width;
 				windowHeight = event.size.height;
 				break;
 			case sf::Event::KeyPressed:
-				if (event.key.code == sf::Keyboard::Q) window.close();
+				switch (event.key.code) {
+					case sf::Keyboard::Q: isRunning = false; break;
+					case sf::Keyboard::G: debug = !debug; break;
+					case sf::Keyboard::P: togglePause();  break;
+					default: break;
+				}
 				break;
 			default:
 				break;
@@ -115,44 +127,39 @@ void Game::handleEvent() {
 	}
 }
 
-void Game::update(sf::Time deltaTime) {
+void Game::update(const float deltaTime) {
 	scale = sf::Vector2f(
 		static_cast<float>(origWidth) / static_cast<float>(windowWidth), 
 		static_cast<float>(origHeight) / static_cast<float>(windowHeight)
 	);
 	
-	float dt = deltaTime.asSeconds();
-
 	fps.update();
-	std::cout << "fps: " << fps.getFPS() << " "/* << "\n"*/;
+	if (!isPaused && isFocused) std::cout << "fps: " << fps.getFPS() << " "/* << "\n"*/;
 	
-	for (auto s : systems) 
-		s->update(dt, scale);
+	for (auto& s : systems) 
+		if (!s->isPaused)
+			s->update(deltaTime, scale, debug);
 
 }
 
-void Game::render() {
+void Game::render(const float deltaTime) {
 	window.clear(sf::Color::Black);
 
-	for (auto rs : renderingSystems) {
-		rs->render(scale);
-	}
+	for (auto& rs : renderingSystems) 
+		if (!rs->isPaused)
+			rs->update(deltaTime, scale, debug);
 
 	window.display();
 }
 
 void Game::pause() {
 	isPaused = true;
-	for (auto s : systems) {
-		s->pause();
-	}
+	pauseSystems();
 }
 
 void Game::resume() {
 	isPaused = false;
-	for (auto s : systems) {
-		s->resume();
-	}
+	resumeSystems();
 }
 
 void Game::togglePause() {
@@ -163,15 +170,30 @@ void Game::togglePause() {
 	}
 }
 
-bool Game::isRunning() {
-	return window.isOpen();
+void Game::focus() {
+	isFocused = true;
+	if (!isPaused) resumeSystems();
 }
 
-void Game::addSystem(System* s) {
-	systems.push_back(s);
+void Game::unfocus() {
+	isFocused = false;
+	pauseSystems();
 }
 
-void Game::addSystem(RenderingSystem* rs) {
-	renderingSystems.push_back(rs);
+void Game::addSystem(std::unique_ptr<System> s) {
+	systems.push_back(std::move(s));
 }
 
+void Game::addRenderingSystem(std::unique_ptr<RenderingSystem> rs) {
+	renderingSystems.push_back(std::move(rs));
+}
+
+void Game::pauseSystems() {
+	for (auto& s : systems) 
+		s->pause();
+}
+
+void Game::resumeSystems() {
+	for (auto& s : systems) 
+		s->resume();
+}

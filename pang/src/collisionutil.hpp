@@ -3,11 +3,6 @@
 #include "components/components.hpp"
 #include "util.hpp"
 
-#include <variant>
-#include <iostream>
-
-#include <entt/entt.hpp>
-
 // this is gonna be spaghetti so redo this idk how
 
 // I stole the 2 following methods from SFML source cause my shit didn't work

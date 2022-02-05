@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 set(PROJECT_NAME pang)
 
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
 
 project(${PROJECT_NAME} VERSION 0.0.1
 			 DESCRIPTION "recreation of the arcade pang game for the motorola science cup 2021"
@@ -16,8 +16,10 @@ add_executable(${PROJECT_NAME}
 	main.cpp
 	Game.cpp
 	FPS.cpp
+	systems/AnimatedRenderingSystem.cpp
 	systems/CollisionSystem.cpp
 	systems/GravitySystem.cpp
+	systems/HealthSystem.cpp
 	systems/PlayerMovementSystem.cpp
 	systems/RenderingSystem.cpp
 	systems/System.cpp

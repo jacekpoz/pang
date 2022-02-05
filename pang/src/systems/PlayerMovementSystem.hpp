@@ -6,9 +6,8 @@ class PlayerMovementSystem : public System {
 
 public:
 	PlayerMovementSystem(entt::registry& r);
-	~PlayerMovementSystem();
 
-	void update(const float deltaTime, sf::Vector2f scale);
+	void update(const float deltaTime, const sf::Vector2f scale, const bool debug);
 private:
 	bool isSpacePressed = false;
 };

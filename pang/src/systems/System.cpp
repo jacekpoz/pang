@@ -1,14 +1,7 @@
 #include "System.hpp"
 
-System::System(entt::registry& r) : isPaused(false) {
-	init(r);
-}
-
-System::~System() {}
-
-void System::init(entt::registry& r) {
-	registry = &r;
-}
+System::System(entt::registry& r) 
+	: isPaused(false), registry(r) {}
 
 void System::pause() {
 	isPaused = true;

@@ -11,27 +11,20 @@
 
 #include <entt/entt.hpp>
 
-using TextureCache = std::unordered_map<std::string, sf::Texture>;
-using SpriteCache = std::unordered_map<entt::entity, sf::Sprite>;
-
 class RenderingSystem : public System {
 
 public:
-	RenderingSystem(entt::registry& r, sf::RenderWindow* w);
-	virtual ~RenderingSystem();
+	RenderingSystem(entt::registry& r, sf::RenderWindow& w);
 
-	void render(sf::Vector2f scale);
-	// left here to retain inheritance, deltaTime serves no purpose
-	// so this only calls render()
-	void update(const float deltaTime, sf::Vector2f scale) override;
+	virtual void update(const float deltaTime, const sf::Vector2f scale, const bool debug);
 	
-private:
-	sf::RenderWindow* window;
+protected:
+	sf::RenderWindow& window;
 
-	TextureCache txCache;
+	std::unordered_map<std::string, sf::Texture> txCache;
 	sf::Texture& getTexture(std::string path);
 
-	SpriteCache sprCache;
+	std::unordered_map<entt::entity, sf::Sprite> sprCache;
 	sf::Sprite& getSprite(entt::entity entity);
 
 };

@@ -9,21 +9,25 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 
+#define FMT_HEADER_ONLY
+#define FMTLOG_HEADER_ONLY
+#include "fmtlog.h"
+
 int main() {
 
-	Game* game = new Game(sf::VideoMode(800, 600), "dupka", sf::Style::Default);
+	fmtlog::setLogFile("logs/pang.log", true);
+
+	Game game = Game(sf::VideoMode(800, 600), "dupka", sf::Style::Default);
 	
 	sf::Clock clock;
 	
-	while (game->isRunning()) {
+	while (game.isRunning) {
 		sf::Time deltaTime = clock.restart();
 
-		game->handleEvent();
-		game->update(deltaTime);
-		game->render();
+		game.handleEvent();
+		game.update(deltaTime.asSeconds());
+		game.render(deltaTime.asSeconds());
 	}
 	
-	delete game;
-
 	return 0;
 }

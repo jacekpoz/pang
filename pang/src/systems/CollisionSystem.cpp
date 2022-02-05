@@ -56,11 +56,9 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 		for (const auto ball : balls) {
 			auto [bPos, bHitbox] = registry.get<Position, Hitbox>(ball);
 
-			bool plCollides = collides(pPos, pHitbox, bPos, bHitbox);
-
-			std::cout << plCollides << "\n";
-			registry.patch<Health>(player, [plCollides]
-					(auto& h) { h.collides = plCollides; });
+			if (collides(pPos, pHitbox, bPos, bHitbox)) {
+				registry.patch<Health>(player, [](auto& h) { h.collides = true; });
+			} else registry.patch<Health>(player, [](auto& h) {h.collides = false; });
 		}
 
 	}

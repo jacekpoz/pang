@@ -17,32 +17,40 @@ public:
 	~Game();
 
 	void handleEvent();
-	void update(sf::Time deltaTime);
-	void render();
+	void update(const float deltaTime);
+	void render(const float deltaTime);
 
 	void pause();
 	void resume();
 	void togglePause();
 
-	bool isRunning();
+	void focus();
+	void unfocus();
 
-	void addSystem(System* s);
-	void addSystem(RenderingSystem* rs);
+	bool isRunning = true;
+
+	void addSystem(std::unique_ptr<System> s);
+	void addRenderingSystem(std::unique_ptr<RenderingSystem> rs);
 
 private:
 	sf::RenderWindow window;
 	entt::registry registry;
 
-	std::vector<System*> systems;
+	std::vector<std::unique_ptr<System>> systems;
 
-	std::vector<RenderingSystem*> renderingSystems;
+	std::vector<std::unique_ptr<RenderingSystem>> renderingSystems;
 
 	FPS fps;
 
-	bool isPaused;
+	bool isPaused = false;
+	bool isFocused = true;
+	bool debug = false;
 
 	unsigned int origWidth, origHeight;
 	unsigned int windowWidth, windowHeight;
 
 	sf::Vector2f scale;
+
+	void pauseSystems();
+	void resumeSystems();
 };

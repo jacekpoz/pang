@@ -1,5 +1,7 @@
 #include "HealthSystem.hpp"
 
+#include <iostream>
+
 HealthSystem::HealthSystem(entt::registry& r) 
 	: System(r) {}
 
@@ -14,21 +16,27 @@ void HealthSystem::update(const float deltaTime, const sf::Vector2f scale, const
 			if (h.timeLeft <= 0.f) {
 				h.timeLeft = 0.f; 
 				h.damaged = false;
-			} else h.timeLeft -= 0.01f;
+				registry.patch<Sprite>(player, [](auto &s) {
+					s.animated = false;
+					s.path = "res/textures/player.png";
+				});
+			} else h.timeLeft -= 1.f * deltaTime;
 			continue;
 		}
 
 		if (h.collides) h.damaged = true;
+		else continue;
 
 		if (h.health > 0) {
 			--h.health;
 			h.timeLeft = 1000.f * deltaTime;
 			h.damaged = true; 
+			std::cout << "dupa\n";
 			registry.patch<Sprite>(player, [](auto &s) {
 				s.animated = true;
 				s.path = "res/textures/player_damaged.png";
 				s.width = 64; s.height = 128; s.frames = 2;
-				s.frameTime = 50.f;
+				s.frameTime = 0.1f;
 			});
 		}
 	}
