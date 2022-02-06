@@ -7,9 +7,9 @@ HealthSystem::HealthSystem(entt::registry& r)
 
 void HealthSystem::update(const float deltaTime, const sf::Vector2f scale, const bool debug) {
 	
-	auto players = registry.view<Player, Health>();
+	const auto players = registry.view<Player, Health>();
 
-	for (auto player : players) {
+	for (const auto player : players) {
 		auto& h = players.get<Health>(player);
 
 		if (h.damaged) {

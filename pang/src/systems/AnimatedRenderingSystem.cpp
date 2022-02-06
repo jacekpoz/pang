@@ -9,10 +9,10 @@ AnimatedRenderingSystem::AnimatedRenderingSystem(entt::registry& r, sf::RenderWi
 	: RenderingSystem(r, w) {}
 
 void AnimatedRenderingSystem::update(const float deltaTime, const sf::Vector2f scale, const bool debug) {
-	auto animated = registry.view<Position, Sprite>();
+	const auto animated = registry.view<Position, Sprite>();
 
-	for (auto entity : animated) {
-		auto [pos, sprite] = animated.get(entity);
+	for (const auto entity : animated) {
+		const auto [pos, sprite] = animated.get(entity);
 		if (!sprite.animated) continue;
 
 		sprite.timeElapsed += deltaTime;
@@ -20,7 +20,7 @@ void AnimatedRenderingSystem::update(const float deltaTime, const sf::Vector2f s
 		if (sprite.timeElapsed >= sprite.frames * sprite.frameTime) 
 			sprite.timeElapsed = 0.f;
 
-		sf::Vector2f scaledPos = {pos.pos.x * scale.x, pos.pos.y * scale.y};
+		const sf::Vector2f scaledPos = {pos.pos.x * scale.x, pos.pos.y * scale.y};
 
 		sf::Sprite& spr = getSprite(entity);
 
@@ -35,8 +35,8 @@ void AnimatedRenderingSystem::update(const float deltaTime, const sf::Vector2f s
 			}
 		}
 
-		sf::FloatRect bounds = spr.getLocalBounds();
-		sf::Vector2f localCenter{
+		const sf::FloatRect bounds = spr.getLocalBounds();
+		const sf::Vector2f localCenter{
 			bounds.left + bounds.width / 2.f,
 			bounds.top + bounds.height / 2.f
 		};
@@ -48,7 +48,7 @@ void AnimatedRenderingSystem::update(const float deltaTime, const sf::Vector2f s
 		if (sprite.visible) window.draw(spr);
 	
 		if (debug && registry.all_of<Hitbox>(entity)) {
-			auto& h = registry.get<Hitbox>(entity);
+			const auto& h = registry.get<Hitbox>(entity);
 			sf::RectangleShape rect;
 			rect.setOrigin(localCenter);
 			rect.setPosition(scaledPos);

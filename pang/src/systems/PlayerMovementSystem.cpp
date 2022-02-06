@@ -9,14 +9,14 @@ PlayerMovementSystem::PlayerMovementSystem(entt::registry& r)
 
 void PlayerMovementSystem::update(const float deltaTime, const sf::Vector2f scale, const bool debug) {
 
-	auto players = registry.view<Player>();
+	const auto players = registry.view<Player>();
 
 	// yeah I know this isn't the best way to handle this
 	// but I haven't learned event dispatchers in entt
 	// or whatever they're called Idk maybe I'll do that soon
 	// but it's not that high of a priority right know
 	
-	for (auto player : players) {	
+	for (const auto player : players) {	
 		if (
 			sf::Keyboard::isKeyPressed(sf::Keyboard::A) 
 		) {

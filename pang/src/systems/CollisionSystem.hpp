@@ -18,6 +18,6 @@ public:
 	void updateY(const float deltaTime, const sf::Vector2f scale, const entt::entity entity);
 
 private:
-	bool collides(Position p1, Hitbox h1, Position p2, Hitbox h2);
+	bool collides(const Position p1, const Hitbox h1, const Position p2, const Hitbox h2);
 
 };

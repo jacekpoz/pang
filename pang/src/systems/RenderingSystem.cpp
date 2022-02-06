@@ -15,19 +15,19 @@ RenderingSystem::RenderingSystem(entt::registry& r, sf::RenderWindow& w)
 
 void RenderingSystem::update(const float deltaTime, const sf::Vector2f scale, const bool debug) {
 	
-	auto renderableView = registry.view<Position, Sprite>();
-	for (auto& entity : renderableView) {
-		auto [pos, sprite] = renderableView.get(entity);
+	const auto renderableView = registry.view<Position, Sprite>();
+	for (const auto entity : renderableView) {
+		const auto [pos, sprite] = renderableView.get(entity);
 		
 		if (sprite.animated) continue;
 
-		sf::Vector2f scaledPos = {pos.pos.x * scale.x, pos.pos.y * scale.y};
+		const sf::Vector2f scaledPos = {pos.pos.x * scale.x, pos.pos.y * scale.y};
 
 		sf::Sprite& spr = getSprite(entity);
 
 		// sets sprite origin to the center of the texture
-		sf::FloatRect bounds = spr.getLocalBounds();
-		sf::Vector2f localCenter{
+		const sf::FloatRect bounds = spr.getLocalBounds();
+		const sf::Vector2f localCenter{
 			bounds.left + bounds.width / 2.f,
 			bounds.top + bounds.height / 2.f
 		};
@@ -39,7 +39,7 @@ void RenderingSystem::update(const float deltaTime, const sf::Vector2f scale, co
 		if (sprite.visible) window.draw(spr);
 	
 		if (debug && registry.all_of<Hitbox>(entity)) {
-			auto& h = registry.get<Hitbox>(entity);
+			const auto& h = registry.get<Hitbox>(entity);
 			sf::RectangleShape rect;
 			rect.setOrigin(localCenter);
 			rect.setPosition(scaledPos);
@@ -70,7 +70,7 @@ sf::Texture& RenderingSystem::getTexture(std::string path) {
 sf::Sprite& RenderingSystem::getSprite(entt::entity entity) {
 
 	if (sprCache.find(entity) == sprCache.end()) {
-		auto& sprite = registry.get<Sprite>(entity);
+		const auto& sprite = registry.get<Sprite>(entity);
 		
 		sf::Sprite spr;
 		spr.setTexture(getTexture(sprite.path));
