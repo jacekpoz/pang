@@ -1,5 +1,4 @@
 #include "CollisionSystem.hpp"
-#include "../collisionutil.hpp"
 
 #include <iostream>
 #include <variant>
@@ -53,13 +52,12 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 			}
 		}
 
+		bool playerCollides = false;
 		for (const auto ball : balls) {
 			auto [bPos, bHitbox] = registry.get<Position, Hitbox>(ball);
-
-			if (collides(pPos, pHitbox, bPos, bHitbox)) {
-				registry.patch<Health>(player, [](auto& h) { h.collides = true; });
-			} else registry.patch<Health>(player, [](auto& h) {h.collides = false; });
+			if (collides(pPos, pHitbox, bPos, bHitbox) playerCollides = true;
 		}
+		registry.patch<Health>(player, [playerCollides](auto &h) { h.collides = playerCollides; });
 
 	}
 	for (const auto ball : balls) {
@@ -131,4 +129,35 @@ void CollisionSystem::updateY(const float deltaTime, const sf::Vector2f scale, c
 		pos.lastPos.y = pos.pos.y;
 		pos.pos.y += (vel.vel.y * deltaTime)/* * scale.y*/;
 	});
+}
+
+bool CollisionSystem::collides(Position p1, Hitbox h1, Position p2, Hitbox h2) {
+	
+	float top1 = p1.pos.y - h1.h / 2;
+	float bottom1 = p1.pos.y + h1.h / 2;
+	float right1 = p1.pos.x + h1.w / 2;
+	float left1 = p1.pos.x - h1.w / 2;
+
+	float top2 = p2.pos.y - h2.h / 2;
+	float bottom2 = p2.pos.y + h2.h / 2;
+	float right2 = p2.pos.x + h2.w / 2;
+	float left2 = p2.pos.x - h2.w / 2;
+
+	float h1MinY = std::min(top1, bottom1);
+	float h1MaxY = std::max(top1, bottom1);
+	float h1MinX = std::min(left1, right1);
+	float h1MaxX = std::max(left1, right1);
+
+	float h2MinY = std::min(top2, bottom2);
+	float h2MaxY = std::max(top2, bottom2);
+	float h2MinX = std::min(left2, right2);
+	float h2MaxX = std::max(left2, right2);
+
+	float interTop = std::max(h1MinY, h2MinY);
+	float interBottom = std::min(h1MaxY, h2MaxY);
+
+	float interLeft = std::max(h1MinX, h2MinX);
+	float interRight = std::min(h1MaxX, h2MaxX);
+
+	return (interTop < interBottom) && interLeft < interRight;
 }
