@@ -31,7 +31,6 @@ void HealthSystem::update(const float deltaTime, const sf::Vector2f scale, const
 			--h.health;
 			h.timeLeft = 1000.f * deltaTime;
 			h.damaged = true; 
-			std::cout << "dupa\n";
 			registry.patch<Sprite>(player, [](auto &s) {
 				s.animated = true;
 				s.path = "res/textures/player_damaged.png";

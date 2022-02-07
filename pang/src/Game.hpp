@@ -7,6 +7,8 @@
 #include <string>
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 #include <entt/entt.hpp>
 
@@ -40,7 +42,10 @@ private:
 
 	std::vector<std::unique_ptr<RenderingSystem>> renderingSystems;
 
+	sf::Font font;
+
 	FPS fps;
+	sf::Text fpsText;
 
 	bool isPaused = false;
 	bool isFocused = true;

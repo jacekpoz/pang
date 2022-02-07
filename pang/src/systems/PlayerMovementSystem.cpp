@@ -58,6 +58,9 @@ void PlayerMovementSystem::update(const float deltaTime, const sf::Vector2f scal
 		} else {
 			isSpacePressed = false;
 		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			
+		}
 	}
 
 }

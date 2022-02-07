@@ -24,6 +24,13 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	window.create(mode, title, style);
 	window.setVerticalSyncEnabled(false);
 
+	font.loadFromFile("res/fonts/PublicPixel.ttf");
+
+	fpsText.setFont(font);
+	fpsText.setStyle(sf::Text::Bold);
+	fpsText.setFillColor(sf::Color::White);
+	fpsText.setPosition(10.f, 10.f);
+
 	origWidth = windowWidth = mode.width;
 	origHeight = windowHeight = mode.height;
 
@@ -73,16 +80,18 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * 64.f + 50.f, w.pos.y * 64.f + 50.f));
 	}
 
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		auto ball = registry.create();
+		int size = i + 1;
+		float ballSize = static_cast<float>(pow(2, size) * 10);
 
-		registry.emplace<Sprite>(ball, "res/textures/ball1.png");
+		registry.emplace<Ball>(ball, size);
+		registry.emplace<Sprite>(ball, "res/textures/ball" + std::to_string(size) + ".png");
+		registry.emplace<Hitbox>(ball, ballSize, ballSize);
 		registry.emplace<Position>(ball, sf::Vector2f(i * 25.f + 100.f, 200.f));
 		registry.emplace<Mass>(ball, 10.f);
 		registry.emplace<Acceleration>(ball, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
 		registry.emplace<Velocity>(ball, sf::Vector2f(50.f, 50.f), sf::Vector2f(500.f, 500.f));
-		registry.emplace<Ball>(ball, 1);
-		registry.emplace<Hitbox>(ball, 20.f, 20.f);
 	}
 }
 
@@ -133,8 +142,9 @@ void Game::update(const float deltaTime) {
 	);
 	
 	fps.update();
-	if (!isPaused && isFocused) std::cout << "fps: " << fps.getFPS() << " "/* << "\n"*/;
-	
+	fpsText.setString("FPS: " + std::to_string(fps.getFPS()));
+	fpsText.setScale(scale);
+
 	for (auto& s : systems) 
 		if (!s->isPaused)
 			s->update(deltaTime, scale, debug);
@@ -147,6 +157,10 @@ void Game::render(const float deltaTime) {
 	for (auto& rs : renderingSystems) 
 		if (!rs->isPaused)
 			rs->update(deltaTime, scale, debug);
+
+	if (debug) {
+		window.draw(fpsText);
+	}
 
 	window.display();
 }
