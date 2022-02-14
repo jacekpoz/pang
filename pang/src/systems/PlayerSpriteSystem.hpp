@@ -1,11 +1,12 @@
+
 #pragma once
 
 #include "System.hpp"
 
-class PlayerMovementSystem : public System {
+class PlayerSpriteSystem : public System {
 
 public:
-	PlayerMovementSystem(entt::registry& r);
+	PlayerSpriteSystem(entt::registry& r);
 
 	void update(const float deltaTime, const sf::Vector2f scale, const bool debug);
 };

@@ -45,6 +45,15 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	auto ars = std::make_unique<AnimatedRenderingSystem>(registry, window);
 	addRenderingSystem(std::move(ars));
 
+	auto hrs = std::make_unique<HitboxRenderingSystem>(registry, window);
+	addRenderingSystem(std::move(hrs));
+
+	auto psts = std::make_unique<PlayerStateSystem>(registry);
+	addSystem(std::move(psts));
+
+	auto psps = std::make_unique<PlayerSpriteSystem>(registry);
+	addSystem(std::move(psps));
+
 	auto pms = std::make_unique<PlayerMovementSystem>(registry);
 	addSystem(std::move(pms));
 

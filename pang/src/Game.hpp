@@ -29,10 +29,10 @@ public:
 	void focus();
 	void unfocus();
 
-	bool isRunning = true;
-
 	void addSystem(std::unique_ptr<System> s);
 	void addRenderingSystem(std::unique_ptr<RenderingSystem> rs);
+
+	bool isRunning = true;
 
 private:
 	sf::RenderWindow window;

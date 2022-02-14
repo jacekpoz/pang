@@ -95,40 +95,40 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 void CollisionSystem::updateX(const float deltaTime, const sf::Vector2f scale, const entt::entity entity) {
 	const auto accel = registry.get<Acceleration>(entity);
 
-	registry.patch<Velocity>(entity, [accel, deltaTime, scale](auto &vel) {
-		vel.vel.x += (accel.accel.x * deltaTime)/* * scale.x*/;
+	registry.patch<Velocity>(entity, [accel, deltaTime](auto &vel) {
+		vel.vel.x += accel.accel.x * deltaTime;
 	});
 	auto vel = registry.get<Velocity>(entity);
 
 	if (vel.vel.x > vel.maxVel.x) 
-		registry.patch<Velocity>(entity, [deltaTime, scale](auto &vel) { vel.vel.x = vel.maxVel.x; });
+		registry.patch<Velocity>(entity, [](auto &vel) { vel.vel.x = vel.maxVel.x; });
 	if (vel.vel.x < -vel.maxVel.x) 
-		registry.patch<Velocity>(entity, [deltaTime, scale](auto &vel) { vel.vel.x = -vel.maxVel.x; });
+		registry.patch<Velocity>(entity, [](auto &vel) { vel.vel.x = -vel.maxVel.x; });
 	vel = registry.get<Velocity>(entity);
 	
-	registry.patch<Position>(entity, [vel, deltaTime, scale](auto &pos) {
+	registry.patch<Position>(entity, [vel, deltaTime](auto &pos) {
 		pos.lastPos.x = pos.pos.x;
-		pos.pos.x += (vel.vel.x * deltaTime)/* * scale.x*/;
+		pos.pos.x += vel.vel.x * deltaTime;
 	});
 }   	
     
 void CollisionSystem::updateY(const float deltaTime, const sf::Vector2f scale, const entt::entity entity) {
 	const auto accel = registry.get<Acceleration>(entity);
 
-	registry.patch<Velocity>(entity, [accel, deltaTime, scale](auto &vel) {
-		vel.vel.y += (accel.accel.y * deltaTime)/* * scale.y*/;
+	registry.patch<Velocity>(entity, [accel, deltaTime](auto &vel) {
+		vel.vel.y += accel.accel.y * deltaTime;
 	});
 	auto vel = registry.get<Velocity>(entity);
 	
 	if (vel.vel.y > vel.maxVel.y) 
-		registry.patch<Velocity>(entity, [deltaTime, scale](auto &vel) { vel.vel.y = vel.maxVel.y; });
+		registry.patch<Velocity>(entity, [](auto &vel) { vel.vel.y = vel.maxVel.y; });
 	if (vel.vel.y < -vel.maxVel.y) 
-		registry.patch<Velocity>(entity, [deltaTime, scale](auto &vel) { vel.vel.y = -vel.maxVel.y; });
+		registry.patch<Velocity>(entity, [](auto &vel) { vel.vel.y = -vel.maxVel.y; });
 	vel = registry.get<Velocity>(entity);
 
-	registry.patch<Position>(entity, [vel, deltaTime, scale](auto &pos) {
+	registry.patch<Position>(entity, [vel, deltaTime](auto &pos) {
 		pos.lastPos.y = pos.pos.y;
-		pos.pos.y += (vel.vel.y * deltaTime)/* * scale.y*/;
+		pos.pos.y += vel.vel.y * deltaTime;
 	});
 }
 

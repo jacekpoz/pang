@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 
 set(PROJECT_NAME pang)
 
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
 
 project(${PROJECT_NAME} VERSION 0.0.1
@@ -20,7 +20,10 @@ add_executable(${PROJECT_NAME}
 	systems/CollisionSystem.cpp
 	systems/GravitySystem.cpp
 	systems/HealthSystem.cpp
+	systems/HitboxRenderingSystem.cpp
 	systems/PlayerMovementSystem.cpp
+	systems/PlayerSpriteSystem.cpp
+	systems/PlayerStateSystem.cpp
 	systems/RenderingSystem.cpp
 	systems/System.cpp
 )

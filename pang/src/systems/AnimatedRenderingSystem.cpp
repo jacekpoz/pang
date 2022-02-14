@@ -46,18 +46,5 @@ void AnimatedRenderingSystem::update(const float deltaTime, const sf::Vector2f s
 		spr.setScale(scale);
 		
 		if (sprite.visible) window.draw(spr);
-	
-		if (debug && registry.all_of<Hitbox>(entity)) {
-			const auto& h = registry.get<Hitbox>(entity);
-			sf::RectangleShape rect;
-			rect.setOrigin(localCenter);
-			rect.setPosition(scaledPos);
-			rect.setSize(sf::Vector2f(h.w, h.h));
-			rect.setScale(scale);
-			rect.setFillColor(sf::Color::Transparent);
-			rect.setOutlineColor(sf::Color::White);
-			rect.setOutlineThickness(1);
-			window.draw(rect);
-		}
 	}
 }
