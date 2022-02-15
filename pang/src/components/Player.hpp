@@ -30,4 +30,5 @@ struct Weapon {
 struct Player {
 	Weapon wpn;
 	State st;
+	State lastSt;
 };

@@ -54,7 +54,7 @@ sf::Texture& RenderingSystem::getTexture(std::string path) {
 sf::Sprite& RenderingSystem::getSprite(entt::entity entity) {
 
 	if (sprCache.find(entity) == sprCache.end()) {
-		const auto& sprite = registry.get<Sprite>(entity);
+		const auto sprite = registry.get<Sprite>(entity);
 		
 		sf::Sprite spr;
 		spr.setTexture(getTexture(sprite.path));

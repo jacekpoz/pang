@@ -51,11 +51,8 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	auto psts = std::make_unique<PlayerStateSystem>(registry);
 	addSystem(std::move(psts));
 
-	auto psps = std::make_unique<PlayerSpriteSystem>(registry);
-	addSystem(std::move(psps));
-
-	auto pms = std::make_unique<PlayerMovementSystem>(registry);
-	addSystem(std::move(pms));
+	auto ps = std::make_unique<PlayerSystem>(registry);
+	addSystem(std::move(ps));
 
 	auto gs = std::make_unique<GravitySystem>(registry);
 	addSystem(std::move(gs));

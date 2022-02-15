@@ -23,6 +23,7 @@ void AnimatedRenderingSystem::update(const float deltaTime, const sf::Vector2f s
 		const sf::Vector2f scaledPos = {pos.pos.x * scale.x, pos.pos.y * scale.y};
 
 		sf::Sprite& spr = getSprite(entity);
+		spr.setTexture(getTexture(sprite.path));
 
 		// stolen from https://stackoverflow.com/questions/52655335/animating-sprites-in-sfml-from-a-sprite-sheet/52656103#52656103
 		float progress = sprite.timeElapsed;

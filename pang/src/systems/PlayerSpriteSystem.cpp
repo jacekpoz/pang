@@ -13,7 +13,6 @@ void PlayerSpriteSystem::update(const float deltaTime, const sf::Vector2f scale,
 	for (const auto player : players) {
 		const auto [pl] = players.get(player);
 		
-		if (pl.st == State::WalkingLeft) std::cout << "AAA";
 
 		switch (pl.st) {
 			case State::WalkingLeft:
