@@ -16,35 +16,8 @@
 
 #pragma once
 
-#include <string>
-
-enum struct State {
-	Standing, 
-	WalkingLeft, 
-	WalkingRight, 
-	Climbing,
-	Falling, 
-	Shooting, 
-	Damaged, 
-};
-
-struct Weapon {
-
-	enum class Type {
-		Hook, 
-		DoubleHook, 
-		PowerHook, 
-		SingleShot, 
-		DoubleShot, 
-	}; 
-
-	Type type;
-	// indicates whether the player already shot a projectile or not
-	bool isProjShot = false;
-};
-
-struct Player {
-	Weapon wpn;
-	State st;
-	State lastSt;
+// includes all projectiles from all weapons
+enum struct Projectile {
+	Hook, 
+	Bullet, 
 };

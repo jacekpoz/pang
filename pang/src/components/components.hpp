@@ -23,6 +23,7 @@
 #include "Mass.hpp"
 #include "Player.hpp"
 #include "Position.hpp"
+#include "Projectile.hpp"
 #include "Sprite.hpp"
 #include "Velocity.hpp"
 #include "Wall.hpp"

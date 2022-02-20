@@ -16,35 +16,12 @@
 
 #pragma once
 
-#include <string>
+#include "System.hpp"
 
-enum struct State {
-	Standing, 
-	WalkingLeft, 
-	WalkingRight, 
-	Climbing,
-	Falling, 
-	Shooting, 
-	Damaged, 
-};
+class PlayerWeaponSystem : public System {
+	
+public:
+	PlayerWeaponSystem(entt::registry& r);
 
-struct Weapon {
-
-	enum class Type {
-		Hook, 
-		DoubleHook, 
-		PowerHook, 
-		SingleShot, 
-		DoubleShot, 
-	}; 
-
-	Type type;
-	// indicates whether the player already shot a projectile or not
-	bool isProjShot = false;
-};
-
-struct Player {
-	Weapon wpn;
-	State st;
-	State lastSt;
+	void update(const float deltaTime, const sf::Vector2f scale, const bool debug);
 };

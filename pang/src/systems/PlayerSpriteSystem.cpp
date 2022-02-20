@@ -31,16 +31,16 @@ void PlayerSpriteSystem::update(const float deltaTime, const sf::Vector2f scale,
 					s.frameTime = 0.1f;
 				});
 				break;
-			case State::Standing:
-				registry.patch<Sprite>(player, [](auto& s) {
+			case State::Shooting:
+				registry.patch<Sprite>(player, [](auto &s) {
 					s.animated = false;
-					s.path = "res/textures/player.png";
+					s.path = "res/textures/player_shooting.png";
 				});
-				break;
+			case State::Standing:
 			default:
-				registry.patch<Sprite>(player, [](auto& s) {
+				registry.patch<Sprite>(player, [](auto &s) {
 					s.animated = false;
-					s.path = "res/textures/player.png";
+					s.path = "res/textures/player_standing.png";
 				});
 				break;
 		}

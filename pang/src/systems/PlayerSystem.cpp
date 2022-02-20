@@ -37,8 +37,6 @@ void PlayerSystem::update(const float deltaTime, const sf::Vector2f scale, const
 					vel.vel.x -= 500.f * deltaTime * scale.x;
 				});
 				break;
-			case State::Shooting:
-
 			default:
 				break;
 		}
@@ -65,7 +63,7 @@ void PlayerSystem::update(const float deltaTime, const sf::Vector2f scale, const
 			case State::Standing:
 				registry.patch<Sprite>(player, [](auto& s) {
 					s.animated = false;
-					s.path = "res/textures/player.png";
+					s.path = "res/textures/player_standing.png";
 				});
 				break;
 			default:

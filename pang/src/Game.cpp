@@ -81,7 +81,7 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 
 	auto player = registry.create();
 
-	registry.emplace<Sprite>(player, "res/textures/player.png");
+	registry.emplace<Sprite>(player, "res/textures/player_standing.png");
 	registry.emplace<Health>(player, 5);
 	registry.emplace<Position>(player, sf::Vector2f(400.f, 200.f));
 	registry.emplace<Mass>(player, 50.f);
