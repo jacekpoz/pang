@@ -16,6 +16,10 @@
 
 #include "PlayerWeaponSystem.hpp"
 
+#include <iostream>
+
+#include <SFML/System/Vector2.hpp>
+
 PlayerWeaponSystem::PlayerWeaponSystem(entt::registry& r) 
 	: System(r) {}
 
@@ -28,18 +32,30 @@ void PlayerWeaponSystem::update(const float deltaTime, const sf::Vector2f scale,
 		if (pl.st != State::Shooting) continue;
 
 		const auto plPos = registry.get<Position>(player);
+		const auto plHitbox = registry.get<Hitbox>(player);
 
 		switch (pl.wpn.type) {
-			case Weapon::Type::Hook:
-				if (pl.wpn.isProjShot) break;
-	
-				auto hook = registry.create<Projectile>(Projectile::Hook);
-				registry.emplace<Position>(hook, plPos.pos);
-				registry.emplace<Hitbox>(hook, 20.f, 0.f);
+			case Weapon::Type::Hook: {
+				if (pl.wpn.projNum > 0) break;
+
+				registry.patch<Player>(player, [](auto &pl) { ++pl.wpn.projNum; });
+
+				auto hook = registry.create();
+				registry.emplace<Projectile>(hook, Projectile::Type::Hook);
+				registry.emplace<Sprite>(hook, "res/textures/hook.png");
+				registry.emplace<Position>(hook, sf::Vector2f{
+					plPos.pos.x,
+					plPos.pos.y + plHitbox.h / 2.f - 5.f
+				});
+				registry.emplace<Hitbox>(hook, 20.f, 10.f);
 				// TODO work out how to make the hooks move and also how to split the textures into parts yeah
 
-				break;
+				std::cout << "dupa\n";
 
+				}break;
+			default: {
+
+			}break;
 		}
 	}
 }

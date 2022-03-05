@@ -27,6 +27,7 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 	const auto players = registry.view<Player, Position, Hitbox>();
 	const auto balls = registry.view<Ball, Position, Hitbox>();
 	const auto walls = registry.view<Wall, Position, Hitbox>();
+	const auto projectiles = registry.view<Projectile, Position, Hitbox>();
 
 	for (const auto player : players) {
 		const auto [h, a, v, p] = registry.get<Health, Acceleration, Velocity, Position>(player);
@@ -106,10 +107,31 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 		}
 	}
 
+	for (const auto projectile : projectiles) {
+		const auto [pPos, pHitbox] = registry.get<Position, Hitbox>(projectile);
+
+		for (const auto wall : walls) {
+			const auto [wPos, wHitbox] = registry.get<Position, Hitbox>(wall);
+
+			if (collides(pPos, pHitbox, wPos, wHitbox)) {
+				// I can't be bothered to do this in a normal way
+				for (const auto player : registry.view<Player>())
+					registry.patch<Player>(player, [](auto &pl) { --pl.wpn.projNum; });
+				registry.patch<Projectile>(projectile, [](auto &pr) { pr.dead = true; });
+			}
+		}
+	}
+
 }
 
 void CollisionSystem::updateX(const float deltaTime, const sf::Vector2f scale, const entt::entity entity) {
-	const auto accel = registry.get<Acceleration>(entity);
+	auto accel = registry.get<Acceleration>(entity);
+
+	if (accel.accel.x > accel.maxAccel.x) 
+		registry.patch<Acceleration>(entity, [](auto &accel) { accel.accel.x = accel.maxAccel.x; });
+	if (accel.accel.x < -accel.maxAccel.x) 
+		registry.patch<Acceleration>(entity, [](auto &accel) { accel.accel.x = -accel.maxAccel.x; });
+	accel = registry.get<Acceleration>(entity);
 
 	registry.patch<Velocity>(entity, [accel, deltaTime](auto &vel) {
 		vel.vel.x += accel.accel.x * deltaTime;
@@ -129,7 +151,13 @@ void CollisionSystem::updateX(const float deltaTime, const sf::Vector2f scale, c
 }   	
     
 void CollisionSystem::updateY(const float deltaTime, const sf::Vector2f scale, const entt::entity entity) {
-	const auto accel = registry.get<Acceleration>(entity);
+	auto accel = registry.get<Acceleration>(entity);
+
+	if (accel.accel.y > accel.maxAccel.y) 
+		registry.patch<Acceleration>(entity, [](auto &accel) { accel.accel.y = accel.maxAccel.y; });
+	if (accel.accel.y < -accel.maxAccel.y) 
+		registry.patch<Acceleration>(entity, [](auto &accel) { accel.accel.y = -accel.maxAccel.y; });
+	accel = registry.get<Acceleration>(entity);
 
 	registry.patch<Velocity>(entity, [accel, deltaTime](auto &vel) {
 		vel.vel.y += accel.accel.y * deltaTime;

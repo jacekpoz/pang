@@ -70,6 +70,12 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	auto ps = std::make_unique<PlayerSystem>(registry);
 	addSystem(std::move(ps));
 
+	auto pws = std::make_unique<PlayerWeaponSystem>(registry);
+	addSystem(std::move(pws));
+
+	auto prs = std::make_unique<ProjectileSystem>(registry);
+	addSystem(std::move(prs));
+
 	auto gs = std::make_unique<GravitySystem>(registry);
 	addSystem(std::move(gs));
 
@@ -87,7 +93,8 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	registry.emplace<Mass>(player, 50.f);
 	registry.emplace<Acceleration>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
 	registry.emplace<Velocity>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(500.f, 500.f));
-	registry.emplace<Player>(player);
+	Weapon wpn{Weapon::Type::Hook};
+	registry.emplace<Player>(player, wpn);
 	registry.emplace<Hitbox>(player, 64.f, 128.f);
 
 	std::vector tiles = parseLevel("res/levels/lvl1.txt");

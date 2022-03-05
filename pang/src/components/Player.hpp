@@ -39,8 +39,8 @@ struct Weapon {
 	}; 
 
 	Type type;
-	// indicates whether the player already shot a projectile or not
-	bool isProjShot = false;
+	// how many projectiles are shot like alive and shit
+	int projNum = 0;
 };
 
 struct Player {

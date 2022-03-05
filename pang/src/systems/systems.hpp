@@ -23,5 +23,7 @@
 #include "HitboxRenderingSystem.hpp"
 #include "PlayerStateSystem.hpp"
 #include "PlayerSystem.hpp"
+#include "PlayerWeaponSystem.hpp"
+#include "ProjectileSystem.hpp"
 #include "RenderingSystem.hpp"
 #include "System.hpp"

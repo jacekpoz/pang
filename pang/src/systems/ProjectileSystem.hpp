@@ -16,14 +16,13 @@
 
 #pragma once
 
-// includes all projectiles from all weapons
-struct Projectile {
-	enum class Type {
-		Hook, 
-		PowerHook, 
-		Bullet, 
-	};
+#include "System.hpp"
 
-	Type type;
-	bool dead = false;
+class ProjectileSystem : public System {
+	
+public:
+	ProjectileSystem(entt::registry& r);
+
+	void update(const float deltaTime, const sf::Vector2f scale, const bool debug);
 };
+

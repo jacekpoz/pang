@@ -18,6 +18,8 @@
 
 #include <string>
 
+#include <SFML/Graphics/Rect.hpp>
+
 struct Sprite {
 	std::string path;
 	bool animated = false;

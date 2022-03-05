@@ -49,5 +49,8 @@ void HitboxRenderingSystem::update(const float deltaTime, const sf::Vector2f sca
 		rect.setOutlineColor(sf::Color::White);
 		rect.setOutlineThickness(1);
 		window.draw(rect);
+
+		sf::Vertex point(scaledPos, sf::Color::Green);
+		window.draw(&point, 1, sf::Points);
 	}
 }

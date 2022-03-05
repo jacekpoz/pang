@@ -28,9 +28,9 @@ RenderingSystem::RenderingSystem(entt::registry& r, sf::RenderWindow& w)
 
 void RenderingSystem::update(const float deltaTime, const sf::Vector2f scale, const bool debug) {
 	
-	const auto renderableView = registry.view<Position, Sprite>();
+	const auto renderableView = registry.view<Position, Hitbox, Sprite>();
 	for (const auto entity : renderableView) {
-		const auto [pos, sprite] = renderableView.get(entity);
+		const auto [pos, hitbox, sprite] = renderableView.get(entity);
 		
 		if (sprite.animated) continue;
 
@@ -45,6 +45,13 @@ void RenderingSystem::update(const float deltaTime, const sf::Vector2f scale, co
 			bounds.top + bounds.height / 2.f
 		};
 		spr.setOrigin(localCenter);
+
+		spr.setTextureRect(sf::IntRect{
+			static_cast<int>(bounds.left), 
+			static_cast<int>(bounds.top), 
+			static_cast<int>(hitbox.w), 
+			static_cast<int>(hitbox.h)
+		});
 
 		spr.setPosition(scaledPos);
 		spr.setScale(scale);

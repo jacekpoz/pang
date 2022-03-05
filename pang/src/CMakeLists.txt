@@ -23,6 +23,8 @@ add_executable(${PROJECT_NAME}
 	systems/HitboxRenderingSystem.cpp
 	systems/PlayerStateSystem.cpp
 	systems/PlayerSystem.cpp
+	systems/PlayerWeaponSystem.cpp
+	systems/ProjectileSystem.cpp
 	systems/RenderingSystem.cpp
 	systems/System.cpp
 )
