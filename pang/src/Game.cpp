@@ -16,7 +16,6 @@
 
 #include "Game.hpp"
 
-#include "levelparser.hpp"
 #include "entityhelper.hpp"
 #include "components/components.hpp"
 #include "systems/systems.hpp"
@@ -28,6 +27,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <algorithm>
+#include <filesystem>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
@@ -35,6 +35,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 
 Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
@@ -42,6 +43,12 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	window.setVerticalSyncEnabled(true);
 
 	font.loadFromFile("res/fonts/PublicPixel.ttf");
+
+	pangText.setFont(font);
+	pangText.setStyle(sf::Text::Bold);
+	pangText.setFillColor(sf::Color::White);
+	pangText.setCharacterSize(30);
+	pangText.setString("Pang");
 
 	fpsText.setFont(font);
 	fpsText.setStyle(sf::Text::Bold);
@@ -93,32 +100,28 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	auto hs = std::make_unique<HealthSystem>(registry);
 	addSystem(std::move(hs));
 
-	auto player = registry.create();
+	const std::filesystem::path levels("res/levels");
+	int level = 0;
+	for (const auto &file : std::filesystem::directory_iterator(levels)) {
+		++level;
+		Button b;
+		b.baseColor = sf::Color(99, 102, 106);
+		b.hoverColor = sf::Color(217, 217, 214);
+		b.levelPath = file.path();
+		b.text.setString(std::to_string(level));
+		b.text.setFillColor(sf::Color::White);
+		b.text.setFont(font);
+		const float x = ((windowWidth / 2.f - 25.f) + ((level % 3) * 25.f)) * scale.x;
+		const float y = ((windowHeight / 2.f - 100.f) + ((level / 3) * 50.f)) * scale.y;
+		const float w = 25.f * scale.x;
+		const float h = 25.f * scale.y;
 
-	registry.emplace<Sprite>(player, "res/textures/player_standing.png");
-	registry.emplace<Health>(player, 5);
-	registry.emplace<Position>(player, sf::Vector2f(400.f, 600.f));
-	registry.emplace<Mass>(player, 50.f);
-	registry.emplace<Acceleration>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
-	registry.emplace<Velocity>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(500.f, 500.f));
-	Weapon wpn{Weapon::Type::Hook};
-	registry.emplace<Player>(player, wpn);
-	registry.emplace<Hitbox>(player, 64.f, 128.f);
+		b.text.setPosition(x, y);
+		b.bounds = sf::FloatRect{x, y, w, h};
 
-	std::vector tiles = parseLevel("res/levels/lvl1.txt");
-	for (Wall w : tiles) {
-		if (w.type == Wall::Type::None) continue;
-		
-		auto tile = registry.create();
-
-		registry.emplace<Wall>(tile, w);
-		registry.emplace<Sprite>(tile, "res/textures/wall.png");
-		registry.emplace<Hitbox>(tile, 16.f, 16.f);
-		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * 16.f + 100.f, w.pos.y * 16.f + 250.f));
+		buttons.push_back(b);
 	}
 
-	for (int i = 0; i < 4; ++i) 
-		createBall(registry, sf::Vector2f(i * 25.f + 300.f, 400.f), sf::Vector2f(100.f, 50.f), 25.f, i + 1);
 }
 
 Game::~Game() {
@@ -153,6 +156,18 @@ void Game::handleEvent() {
 					default: break;
 				}
 				break;
+			case sf::Event::MouseMoved:
+				for (Button b : buttons) 
+					b.isHover = b.bounds.contains(event.mouseMove.x, event.mouseMove.y);
+				break;
+			case sf::Event::MouseButtonPressed:
+				for (Button b : buttons) {
+					if (b.bounds.contains(event.mouseButton.x, event.mouseButton.y)) {
+						mainMenu = false;
+						parseLevel(registry, b.levelPath, sf::Vector2f{100.f, 100.f});
+					}
+				}
+				break;
 			default:
 				break;
 		}
@@ -164,11 +179,30 @@ void Game::update(const float deltaTime) {
 		static_cast<float>(origWidth) / static_cast<float>(windowWidth), 
 		static_cast<float>(origHeight) / static_cast<float>(windowHeight)
 	);
+
+	if (mainMenu) {
+		pangText.setPosition(windowWidth / 2.f * scale.x, 25.f * scale.y);
+		pangText.setScale(scale);
+		int i = 0;
+		for (Button b : buttons) {
+			++i;
+			const float x = ((windowWidth / 2.f - 50.f) + ((i % 3) * 50.f)) * scale.x;
+			const float y = ((windowHeight / 2.f - 100.f) + ((i / 3) * 50.f)) * scale.y;
+			const float w = 25.f * scale.x;
+			const float h = 25.f * scale.y;
+
+			b.bounds = sf::FloatRect{x, y, w, h};
+
+			b.text.setPosition(x, y);
+			b.text.setScale(scale);
+		}
+		return;
+	}
 	
 	fps.update();
 	fpsText.setString("FPS: " + std::to_string(fps.getFPS()));
 	fpsText.setScale(scale);
-	gameOverText.setPosition(sf::Vector2f(windowWidth / 2, windowHeight / 2));
+	gameOverText.setPosition(sf::Vector2f(windowWidth / 2 * scale.x, windowHeight / 2 * scale.y));
 	gameOverText.setScale(scale);
 
 	for (auto& s : systems) 
@@ -186,6 +220,24 @@ void Game::update(const float deltaTime) {
 
 void Game::render(const float deltaTime) {
 	window.clear(sf::Color::Black);
+
+	if (mainMenu) {
+
+		window.draw(pangText);
+
+		for (Button b : buttons) {
+			sf::RectangleShape btn;
+			btn.setPosition(b.bounds.left, b.bounds.top);
+			btn.setSize(sf::Vector2f{b.bounds.width, b.bounds.height});
+			btn.setFillColor(b.isHover ? b.hoverColor : b.baseColor);
+			window.draw(btn);
+			window.draw(b.text);
+			std::cout << b.isHover << "\n";
+		}
+
+		window.display();
+		return;
+	}
 
 	for (auto& rs : renderingSystems) 
 		if (!rs->isPaused)
@@ -209,6 +261,7 @@ void Game::pause() {
 }
 
 void Game::resume() {
+	if (isGameOver) return;
 	isPaused = false;
 	resumeSystems();
 }

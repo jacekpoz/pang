@@ -18,6 +18,7 @@
 
 #include "systems/systems.hpp"
 #include "FPS.hpp"
+#include "gui/Button.hpp"
 
 #include <vector>
 #include <string>
@@ -77,4 +78,8 @@ private:
 
 	void pauseSystems();
 	void resumeSystems();
+
+	bool mainMenu = true;
+	sf::Text pangText;
+	std::vector<Button> buttons;
 };

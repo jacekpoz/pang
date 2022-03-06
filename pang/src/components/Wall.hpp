@@ -22,10 +22,8 @@ struct Wall {
 
 	enum class Type {
 		Wall, 
-		None, 
+		Breakable,
 	};
 
 	Type type;
-
-	sf::Vector2i pos;
 };

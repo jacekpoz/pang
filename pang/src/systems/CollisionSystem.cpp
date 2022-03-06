@@ -115,13 +115,14 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 		const auto [pPos, pHitbox] = registry.get<Position, Hitbox>(projectile);
 
 		for (const auto wall : walls) {
-			const auto [wPos, wHitbox] = registry.get<Position, Hitbox>(wall);
+			const auto [wWall, wPos, wHitbox] = registry.get<Wall, Position, Hitbox>(wall);
 
 			if (collides(pPos, pHitbox, wPos, wHitbox)) {
 				// I can't be bothered to do this in a normal way
 				for (const auto player : registry.view<Player>())
 					registry.patch<Player>(player, [](auto &pl) { if (pl.wpn.projNum > 0) --pl.wpn.projNum; });
 				registry.patch<Projectile>(projectile, [](auto &pr) { pr.dead = true; });
+				if (wWall.type == Wall::Type::Breakable) registry.destroy(wall);
 			}
 		}
 
