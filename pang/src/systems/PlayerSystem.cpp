@@ -16,6 +16,8 @@
 
 #include "PlayerSystem.hpp"
 
+#include <iostream>
+
 PlayerSystem::PlayerSystem(entt::registry& r) 
 	: System(r) {}
 
@@ -37,8 +39,12 @@ void PlayerSystem::update(const float deltaTime, const sf::Vector2f scale, const
 					vel.vel.x -= 500.f * deltaTime * scale.x;
 				});
 			}break;
+			case State::Shooting:{
+				if (pl.timeShooting == 10.f * deltaTime)
+					registry.patch<Player>(player, [](auto &p) { p.st = p.lastSt; p.timeShooting = 0.f; });
+				registry.patch<Player>(player, [deltaTime](auto &p) { p.timeShooting += 1.f * deltaTime; });
+			}break;
 			default:{
-
 			}break;
 		}
 
@@ -62,13 +68,13 @@ void PlayerSystem::update(const float deltaTime, const sf::Vector2f scale, const
 				});
 			}break;
 			case State::Standing:{
-				registry.patch<Sprite>(player, [](auto& s) {
+				registry.patch<Sprite>(player, [](auto &s) {
 					s.animated = false;
 					s.path = "res/textures/player_standing.png";
 				});
 			}break;
 			default:{
-
+				registry.patch<Player>(player, [](auto &p) { p.timeShooting = 0.f; });
 			}break;
 		}
 	}

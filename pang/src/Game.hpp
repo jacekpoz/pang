@@ -63,6 +63,9 @@ private:
 	FPS fps;
 	sf::Text fpsText;
 
+	bool isGameOver = false;
+	sf::Text gameOverText;
+
 	bool isPaused = false;
 	bool isFocused = true;
 	bool debug = false;

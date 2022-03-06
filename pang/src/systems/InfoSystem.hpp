@@ -16,15 +16,19 @@
 
 #pragma once
 
-#include "AnimatedRenderingSystem.hpp"
-#include "CollisionSystem.hpp"
-#include "GravitySystem.hpp"
-#include "HealthSystem.hpp"
-#include "HitboxRenderingSystem.hpp"
-#include "InfoSystem.hpp"
-#include "PlayerStateSystem.hpp"
-#include "PlayerSystem.hpp"
-#include "PlayerWeaponSystem.hpp"
-#include "ProjectileSystem.hpp"
 #include "RenderingSystem.hpp"
-#include "System.hpp"
+
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
+
+class InfoSystem : public RenderingSystem {
+
+public:
+	InfoSystem(entt::registry& r, sf::RenderWindow& w);
+
+	void update(const float deltaTime, const sf::Vector2f scale, const bool debug);
+
+private:
+	sf::Font font;
+	sf::Text health, score;
+};

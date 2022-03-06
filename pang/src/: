@@ -16,15 +16,39 @@
 
 #pragma once
 
-#include "AnimatedRenderingSystem.hpp"
-#include "CollisionSystem.hpp"
-#include "GravitySystem.hpp"
-#include "HealthSystem.hpp"
-#include "HitboxRenderingSystem.hpp"
-#include "InfoSystem.hpp"
-#include "PlayerStateSystem.hpp"
-#include "PlayerSystem.hpp"
-#include "PlayerWeaponSystem.hpp"
-#include "ProjectileSystem.hpp"
-#include "RenderingSystem.hpp"
-#include "System.hpp"
+#include <string>
+
+enum struct State {
+	Standing, 
+	WalkingLeft, 
+	WalkingRight, 
+	Climbing,
+	Falling, 
+	Shooting, 
+	Damaged, 
+};
+
+struct Weapon {
+
+	enum class Type {
+		Hook, 
+		DoubleHook, 
+		PowerHook, 
+		SingleShot, 
+		DoubleShot, 
+	}; 
+
+	Type type;
+	// how many projectiles are shot like alive and shit
+	int projNum = 0;
+};
+
+struct Player {
+	Weapon wpn;
+	State st;
+	State lastSt;
+
+	float timeShooting = 0.f;
+
+	int score = 0;
+};

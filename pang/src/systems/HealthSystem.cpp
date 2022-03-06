@@ -28,6 +28,8 @@ void HealthSystem::update(const float deltaTime, const sf::Vector2f scale, const
 	for (const auto player : players) {
 		auto [p,h] = players.get(player);
 
+		if (h.health == 0) p.isGameOver = true;
+
 		if (h.damaged) {
 			if (h.timeLeft <= 0.f) {
 				h.timeLeft = 0.f; 
@@ -41,7 +43,7 @@ void HealthSystem::update(const float deltaTime, const sf::Vector2f scale, const
 
 		if (h.health > 0) {
 			--h.health;
-			h.timeLeft = 1000.f * deltaTime;
+			h.timeLeft = 100.f * deltaTime;
 			h.damaged = true; 
 		}
 	}

@@ -36,9 +36,9 @@ void ProjectileSystem::update(const float deltaTime, const sf::Vector2f scale, c
 			case Projectile::Type::Hook: {
 				const float projSpeed = 100.f;
 				registry.patch<Hitbox>(projectile, [deltaTime, scale, projSpeed](auto& h) 
-						{ h.h += projSpeed * deltaTime * scale.y * 2.f; });
+						{ h.h += projSpeed * deltaTime * scale.y * 4.f; });
 				registry.patch<Position>(projectile, [deltaTime, scale, projSpeed](auto& p) 
-						{ p.pos.y -= projSpeed * deltaTime * scale.y; });
+						{ p.pos.y -= projSpeed * deltaTime * scale.y * 2.f; });
 			}break;
 			default:{
 				

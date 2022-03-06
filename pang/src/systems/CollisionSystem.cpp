@@ -16,6 +16,8 @@
 
 #include "CollisionSystem.hpp"
 
+#include "../entityhelper.hpp"
+
 #include <iostream>
 #include <variant>
 
@@ -30,14 +32,16 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 	const auto projectiles = registry.view<Projectile, Position, Hitbox>();
 
 	for (const auto player : players) {
-		const auto [h, a, v, p] = registry.get<Health, Acceleration, Velocity, Position>(player);
+		const auto [h, a, v, p, pl] = registry.get<Health, Acceleration, Velocity, Position, Player>(player);
 		std::cout << 
+		"dt: " << deltaTime << "; " << 
 		"h: " << h.health << "; d: " << h.damaged << "; t: " << h.timeLeft << "; " <<
-		"c: " << h.collides << "; " <<
+		"c: " << h.collides << "; tS: " << pl.timeShooting << "; " <<
 		"aX: " << a.accel.x << "; aY: " << a.accel.y << "; " <<
 		"vX: " << v.vel.x << "; vY: " << v.vel.y << "; " <<
 		"pX: " << p.pos.x << "; pY: " << p.pos.y << "; " << 
-		"lpX: " << p.lastPos.x << "; lpY: " << p.lastPos.y << "; \n";
+		"lpX: " << p.lastPos.x << "; lpY: " << p.lastPos.y << "; " <<
+		"proj: " << pl.wpn.projNum << "; \n";
 
 		const auto [pPos, pHitbox] = registry.get<Position, Hitbox>(player);
 
@@ -116,7 +120,21 @@ void CollisionSystem::update(const float deltaTime, const sf::Vector2f scale, co
 			if (collides(pPos, pHitbox, wPos, wHitbox)) {
 				// I can't be bothered to do this in a normal way
 				for (const auto player : registry.view<Player>())
-					registry.patch<Player>(player, [](auto &pl) { --pl.wpn.projNum; });
+					registry.patch<Player>(player, [](auto &pl) { if (pl.wpn.projNum > 0) --pl.wpn.projNum; });
+				registry.patch<Projectile>(projectile, [](auto &pr) { pr.dead = true; });
+			}
+		}
+
+		for (const auto ball : balls) {
+			const auto [bBall, bPos, bHitbox] = registry.get<Ball, Position, Hitbox>(ball);
+
+			if (collides(pPos, pHitbox, bPos, bHitbox)) {
+				hitBall(registry, ball);
+				for (const auto player : registry.view<Player>())
+					registry.patch<Player>(player, [bBall](auto &pl) {
+						if (pl.wpn.projNum > 0) --pl.wpn.projNum;
+						pl.score += bBall.size * 100;
+					});
 				registry.patch<Projectile>(projectile, [](auto &pr) { pr.dead = true; });
 			}
 		}

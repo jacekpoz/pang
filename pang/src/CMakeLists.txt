@@ -21,6 +21,7 @@ add_executable(${PROJECT_NAME}
 	systems/GravitySystem.cpp
 	systems/HealthSystem.cpp
 	systems/HitboxRenderingSystem.cpp
+	systems/InfoSystem.cpp
 	systems/PlayerStateSystem.cpp
 	systems/PlayerSystem.cpp
 	systems/PlayerWeaponSystem.cpp

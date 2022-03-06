@@ -17,6 +17,7 @@
 #include "Game.hpp"
 
 #include "levelparser.hpp"
+#include "entityhelper.hpp"
 #include "components/components.hpp"
 #include "systems/systems.hpp"
 
@@ -38,7 +39,7 @@
 
 Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	window.create(mode, title, style);
-	window.setVerticalSyncEnabled(false);
+	window.setVerticalSyncEnabled(true);
 
 	font.loadFromFile("res/fonts/PublicPixel.ttf");
 
@@ -46,6 +47,10 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	fpsText.setStyle(sf::Text::Bold);
 	fpsText.setFillColor(sf::Color::White);
 	fpsText.setPosition(10.f, 10.f);
+
+	gameOverText.setFont(font);
+	gameOverText.setFillColor(sf::Color::White);
+	gameOverText.setString("GAME OVER");
 
 	origWidth = windowWidth = mode.width;
 	origHeight = windowHeight = mode.height;
@@ -63,6 +68,9 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 
 	auto hrs = std::make_unique<HitboxRenderingSystem>(registry, window);
 	addRenderingSystem(std::move(hrs));
+
+	auto is = std::make_unique<InfoSystem>(registry, window);
+	addRenderingSystem(std::move(is));
 
 	auto psts = std::make_unique<PlayerStateSystem>(registry);
 	addSystem(std::move(psts));
@@ -89,7 +97,7 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 
 	registry.emplace<Sprite>(player, "res/textures/player_standing.png");
 	registry.emplace<Health>(player, 5);
-	registry.emplace<Position>(player, sf::Vector2f(400.f, 200.f));
+	registry.emplace<Position>(player, sf::Vector2f(400.f, 600.f));
 	registry.emplace<Mass>(player, 50.f);
 	registry.emplace<Acceleration>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
 	registry.emplace<Velocity>(player, sf::Vector2f(0.f, 0.f), sf::Vector2f(500.f, 500.f));
@@ -105,23 +113,12 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 
 		registry.emplace<Wall>(tile, w);
 		registry.emplace<Sprite>(tile, "res/textures/wall.png");
-		registry.emplace<Hitbox>(tile, 64.f, 64.f);
-		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * 64.f + 50.f, w.pos.y * 64.f + 50.f));
+		registry.emplace<Hitbox>(tile, 16.f, 16.f);
+		registry.emplace<Position>(tile, sf::Vector2f(w.pos.x * 16.f + 100.f, w.pos.y * 16.f + 250.f));
 	}
 
-	for (int i = 0; i < 4; ++i) {
-		auto ball = registry.create();
-		int size = i + 1;
-		float ballSize = static_cast<float>(pow(2, size) * 10);
-
-		registry.emplace<Ball>(ball, size);
-		registry.emplace<Sprite>(ball, "res/textures/ball" + std::to_string(size) + ".png");
-		registry.emplace<Hitbox>(ball, ballSize, ballSize);
-		registry.emplace<Position>(ball, sf::Vector2f(i * 25.f + 100.f, 200.f));
-		registry.emplace<Mass>(ball, 10.f);
-		registry.emplace<Acceleration>(ball, sf::Vector2f(0.f, 0.f), sf::Vector2f(50.f, 50.f));
-		registry.emplace<Velocity>(ball, sf::Vector2f(50.f, 50.f), sf::Vector2f(500.f, 500.f));
-	}
+	for (int i = 0; i < 4; ++i) 
+		createBall(registry, sf::Vector2f(i * 25.f + 300.f, 400.f), sf::Vector2f(100.f, 50.f), 25.f, i + 1);
 }
 
 Game::~Game() {
@@ -129,8 +126,6 @@ Game::~Game() {
 
 	systems.clear();
 	renderingSystems.clear();
-
-	std::cout << "dupka" << std::endl;
 }
 
 void Game::handleEvent() {
@@ -173,11 +168,20 @@ void Game::update(const float deltaTime) {
 	fps.update();
 	fpsText.setString("FPS: " + std::to_string(fps.getFPS()));
 	fpsText.setScale(scale);
+	gameOverText.setPosition(sf::Vector2f(windowWidth / 2, windowHeight / 2));
+	gameOverText.setScale(scale);
 
 	for (auto& s : systems) 
 		if (!s->isPaused)
 			s->update(deltaTime, scale, debug);
 
+	const auto players = registry.view<Player>();
+
+	for (const auto player : players) {
+		const auto pl = registry.get<Player>(player);
+
+		if (pl.isGameOver) isGameOver = true;
+	}
 }
 
 void Game::render(const float deltaTime) {
@@ -189,6 +193,11 @@ void Game::render(const float deltaTime) {
 
 	if (debug) {
 		window.draw(fpsText);
+	}
+
+	if (isGameOver) {
+		pause();
+		window.draw(gameOverText);
 	}
 
 	window.display();

@@ -47,4 +47,10 @@ struct Player {
 	Weapon wpn;
 	State st;
 	State lastSt;
+
+	float timeShooting = 0.f;
+
+	int score = 0;
+
+	bool isGameOver = false;
 };

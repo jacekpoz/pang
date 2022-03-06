@@ -36,7 +36,7 @@ void PlayerWeaponSystem::update(const float deltaTime, const sf::Vector2f scale,
 
 		switch (pl.wpn.type) {
 			case Weapon::Type::Hook: {
-				if (pl.wpn.projNum > 0) break;
+				if (pl.wpn.projNum > 0 || pl.timeShooting != 0.f) break;
 
 				registry.patch<Player>(player, [](auto &pl) { ++pl.wpn.projNum; });
 
@@ -45,14 +45,12 @@ void PlayerWeaponSystem::update(const float deltaTime, const sf::Vector2f scale,
 				registry.emplace<Sprite>(hook, "res/textures/hook.png");
 				registry.emplace<Position>(hook, sf::Vector2f{
 					plPos.pos.x,
-					plPos.pos.y + plHitbox.h / 2.f - 5.f
+					plPos.pos.y + plHitbox.h / 2.f - 10.f * scale.y
 				});
 				registry.emplace<Hitbox>(hook, 20.f, 10.f);
 				// TODO work out how to make the hooks move and also how to split the textures into parts yeah
 
-				std::cout << "dupa\n";
-
-				}break;
+			}break;
 			default: {
 
 			}break;
