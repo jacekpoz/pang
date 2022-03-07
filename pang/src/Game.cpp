@@ -59,6 +59,10 @@ Game::Game(sf::VideoMode mode, std::string title, uint32_t style) {
 	gameOverText.setFillColor(sf::Color::White);
 	gameOverText.setString("GAME OVER");
 
+	pauseText.setFont(font);
+	pauseText.setFillColor(sf::Color::White);
+	pauseText.setString("PAUSED");
+
 	origWidth = windowWidth = mode.width;
 	origHeight = windowHeight = mode.height;
 
@@ -153,18 +157,22 @@ void Game::handleEvent() {
 					case sf::Keyboard::Q: isRunning = false; break;
 					case sf::Keyboard::G: debug = !debug; break;
 					case sf::Keyboard::P: togglePause();  break;
+					case sf::Keyboard::X: mainMenu = true; isGameOver = false; break;
 					default: break;
 				}
 				break;
 			case sf::Event::MouseMoved:
+				if (!mainMenu) break;
 				for (Button b : buttons) 
-					b.isHover = b.bounds.contains(event.mouseMove.x, event.mouseMove.y);
+					b.isHover = b.bounds.contains(event.mouseMove.x * scale.x, event.mouseMove.y * scale.y);
 				break;
 			case sf::Event::MouseButtonPressed:
+				if (!mainMenu) break;
 				for (Button b : buttons) {
-					if (b.bounds.contains(event.mouseButton.x, event.mouseButton.y)) {
+					if (b.bounds.contains(event.mouseButton.x * scale.x, event.mouseButton.y * scale.y)) {
 						mainMenu = false;
 						parseLevel(registry, b.levelPath, sf::Vector2f{100.f, 100.f});
+						resume();
 					}
 				}
 				break;
@@ -181,12 +189,15 @@ void Game::update(const float deltaTime) {
 	);
 
 	if (mainMenu) {
+		// quick and dirty workaround for destroying all entities
+		// all the entities should have Position XdXdXd
+		for (auto entity : registry.view<Position>()) registry.destroy(entity);
 		pangText.setPosition(windowWidth / 2.f * scale.x, 25.f * scale.y);
 		pangText.setScale(scale);
 		int i = 0;
 		for (Button b : buttons) {
 			++i;
-			const float x = ((windowWidth / 2.f - 50.f) + ((i % 3) * 50.f)) * scale.x;
+			const float x = ((windowWidth / 2.f - 100.f) + ((i % 3) * 100.f)) * scale.x;
 			const float y = ((windowHeight / 2.f - 100.f) + ((i / 3) * 50.f)) * scale.y;
 			const float w = 25.f * scale.x;
 			const float h = 25.f * scale.y;
@@ -204,6 +215,8 @@ void Game::update(const float deltaTime) {
 	fpsText.setScale(scale);
 	gameOverText.setPosition(sf::Vector2f(windowWidth / 2 * scale.x, windowHeight / 2 * scale.y));
 	gameOverText.setScale(scale);
+	pauseText.setPosition(sf::Vector2f(windowWidth / 2 * scale.x, windowHeight / 2 * scale.y));
+	pauseText.setScale(scale);
 
 	for (auto& s : systems) 
 		if (!s->isPaused)
@@ -232,7 +245,6 @@ void Game::render(const float deltaTime) {
 			btn.setFillColor(b.isHover ? b.hoverColor : b.baseColor);
 			window.draw(btn);
 			window.draw(b.text);
-			std::cout << b.isHover << "\n";
 		}
 
 		window.display();
@@ -250,6 +262,10 @@ void Game::render(const float deltaTime) {
 	if (isGameOver) {
 		pause();
 		window.draw(gameOverText);
+	}
+
+	if (isPaused) {
+		window.draw(pauseText);
 	}
 
 	window.display();

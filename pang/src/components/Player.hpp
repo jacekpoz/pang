@@ -32,6 +32,7 @@ struct Weapon {
 
 	enum class Type {
 		Hook, 
+		// the rest are unimplemented due to lack of time
 		DoubleHook, 
 		PowerHook, 
 		SingleShot, 

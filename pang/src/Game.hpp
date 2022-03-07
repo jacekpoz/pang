@@ -82,4 +82,6 @@ private:
 	bool mainMenu = true;
 	sf::Text pangText;
 	std::vector<Button> buttons;
+
+	sf::Text pauseText;
 };
