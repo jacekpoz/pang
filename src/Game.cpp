@@ -260,7 +260,6 @@ void Game::render(const float deltaTime) {
 	}
 
 	if (isGameOver) {
-		pause();
 		window.draw(gameOverText);
 	}
 
