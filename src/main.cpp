@@ -30,9 +30,10 @@
 
 int main() {
 
+	// yeah this has no use but I'm just gonna leave it in
 	fmtlog::setLogFile("logs/pang.log", true);
 
-	Game game = Game(sf::VideoMode(800, 600), "dupka", sf::Style::Default);
+	Game game = Game(sf::VideoMode(800, 600), "PANG !!!", sf::Style::Default);
 	
 	sf::Clock clock;
 	

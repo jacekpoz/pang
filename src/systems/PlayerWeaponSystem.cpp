@@ -34,6 +34,7 @@ void PlayerWeaponSystem::update(const float deltaTime, const sf::Vector2f scale,
 		const auto plPos = registry.get<Position>(player);
 		const auto plHitbox = registry.get<Hitbox>(player);
 
+		// unnecessary switch - no time to implement other weapons but who cares
 		switch (pl.wpn.type) {
 			case Weapon::Type::Hook: {
 				if (pl.wpn.projNum > 0 || pl.timeShooting != 0.f) break;
@@ -48,7 +49,6 @@ void PlayerWeaponSystem::update(const float deltaTime, const sf::Vector2f scale,
 					plPos.pos.y + plHitbox.h / 2.f - 10.f * scale.y
 				});
 				registry.emplace<Hitbox>(hook, 20.f, 10.f);
-				// TODO work out how to make the hooks move and also how to split the textures into parts yeah
 
 			}break;
 			default: {

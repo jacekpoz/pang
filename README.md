@@ -1,7 +1,7 @@
-# Motorola Science Cup 2021
+# Pang
 
-in this repository you can find my solutions to the tasks in the 2nd part of the motorola science cup 2021
+this is my recreation of the arcade pang game (also known as [Buster Bros.](https://en.wikipedia.org/wiki/Buster_Bros.)) for the motorola science cup 2021
 
-you can find the tasks [here](https://science-cup.pl/#Download)
+you can find gameplay of the original game [here](https://www.youtube.com/watch?v=UyhP6uLk9Fg)
 
-the description of each task can be found in the subdirectories
+for this project I chose C++ because for me it's the easiest and most fun language to write games in

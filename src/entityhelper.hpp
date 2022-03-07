@@ -40,8 +40,6 @@ inline void createWall(entt::registry &r, const sf::Vector2f pos, const bool bre
 }
 
 inline void createBall(entt::registry &r, const sf::Vector2f pos, const sf::Vector2f vel, const float mass, const int size) {
-	std::cout << "DUPA " << size << "\n";
-
 	if (size < 1) return;
 
 	float ballSize = static_cast<float>(pow(2, size) * 10);
@@ -60,17 +58,16 @@ inline void createBall(entt::registry &r, const sf::Vector2f pos, const sf::Vect
 inline void hitBall(entt::registry &r, entt::entity ball) {
 	if (!r.all_of<Ball>(ball)) return;
 
-	const auto [oldPos, oldVel, oldBall, oldMass, oldHitbox] = r.get<Position, Velocity, Ball, Mass, Hitbox>(ball);
+	auto [oldPos, oldVel, oldBall, oldMass, oldHitbox] = r.get<Position, Velocity, Ball, Mass, Hitbox>(ball);
 
-	std::cout << oldBall.size << "\n";
-	r.destroy(ball);
-	if (oldBall.size <= 1) return;
-
-	const int newSize = oldBall.size - 1;
 	const sf::Vector2f newVel{oldVel.vel.x - 50.f, oldVel.vel.y - 50.f};
+	const sf::Vector2f newPos1{oldPos.pos.x + oldHitbox.w, oldPos.pos.y + 1.f};
+	const sf::Vector2f newPos2{oldPos.pos.x - oldHitbox.w, oldPos.pos.y - 1.f};
 
-	createBall(r, sf::Vector2f(oldPos.pos.x + oldHitbox.w, oldPos.pos.y + 1.f), newVel, oldMass.mass, newSize);
-	createBall(r, sf::Vector2f(oldPos.pos.x - oldHitbox.w, oldPos.pos.y - 1.f), newVel, oldMass.mass, newSize);
+	createBall(r, newPos1, newVel, oldMass.mass, oldBall.size - 1);
+	createBall(r, newPos2, newVel, oldMass.mass, oldBall.size - 1);
+
+	r.destroy(ball);
 }
 
 inline void parseLevel(entt::registry &r, const std::string path, const sf::Vector2f offset) {

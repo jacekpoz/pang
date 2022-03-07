@@ -33,6 +33,7 @@ void ProjectileSystem::update(const float deltaTime, const sf::Vector2f scale, c
 		}
 
 		switch (proj.type) {
+			// no need for this as there's no other projectiles
 			case Projectile::Type::Hook: {
 				const float projSpeed = 100.f;
 				registry.patch<Hitbox>(projectile, [deltaTime, scale, projSpeed](auto& h) 
