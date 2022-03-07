@@ -33,3 +33,10 @@ nothing
 
 I probably won't continue this project
 if you want to fork it but I don't recommend it since getting through the spaghetti jungle will take years
+
+# Credits
+jacekpoz - programming
+Filip Miśkiewicz - ALL textures
+Mateusz Cieślak - some levels
+Bartosz Szalski (thug) - some levels
+Mateusz Nowacki - some levels

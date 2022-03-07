@@ -33,3 +33,10 @@ nic
 
 raczej nie będę tego dalej pisał
 jak chcesz to sforkuj ale nie polecam bo przebrnięcie przez dżunglę spaghetti może zająć lata
+
+# Autorzy
+jacekpoz - programowanie
+Filip Miśkiewicz - WSZYSTKIE tekstury
+Mateusz Cieślak - poziomy
+Bartosz Szalski (zbój) - poziomy
+Mateusz Nowacki - poziomy
